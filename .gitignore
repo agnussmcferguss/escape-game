@@ -1,3 +1,18 @@
+# Unreal Derived Folders
+*/Build
+*/Binaries
+*/DerivedDataCache
+*/Intermediate
+*/Saved
+UEscapeGame/Content/StarterContent/
+
+# Visual Studio Derived Folders
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+*.suo
+
 # Compiled Object files
 *.slo
 *.lo
