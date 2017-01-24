@@ -31,6 +31,9 @@ void UOpenDoor::OpenDoor()
 void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// Set the ActorThatOpens
+	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 }
 
