@@ -17,6 +17,8 @@ public:
 
 	void OpenDoor();
 
+	void CloseDoor();
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	
@@ -34,5 +36,10 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	AActor* ActorThatOpens;
 
-	bool isOpen = false;
+	UPROPERTY(EditAnywhere)
+	float DoorCloseDelay = 1.0f;
+
+	float LastDoorOpenTime = -1.0f;
+
+	AActor* Owner; // The owning actor
 };
