@@ -22,6 +22,13 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 
 	Controller = GetWorld()->GetFirstPlayerController();
+
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	if (PhysicsHandle) {
+		
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing PhysicsHandle"), *GetOwner()->GetName());
+	}
 	
 }
 
@@ -40,17 +47,36 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	//UE_LOG(LogTemp, Warning, TEXT("Location: %s, Rotation:, %s"), *ViewLocation.ToString(), *ViewRotation.ToString());
 
 	/// Draw a red trace in the world
-	FVector LineTraceEnd = ViewLocation + ViewRotation.Vector() * GrabDistance;
-	DrawDebugLine(
-		GetWorld(),
+	FVector LineTraceEnd = ViewLocation + ViewRotation.Vector() * Reach;
+	if (ShowDebugLine) {
+		DrawDebugLine(
+			GetWorld(),
+			ViewLocation,
+			LineTraceEnd,
+			FColor(255, 0, 0, 1),
+			false,
+			0,
+			0,
+			LineThickness
+		);
+	}
+
+	/// Setup Query Parameters
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	/// Do a line trace
+	FHitResult Hit;
+	bool hitDetected = GetWorld()->LineTraceSingleByObjectType(
+		Hit,
 		ViewLocation,
 		LineTraceEnd,
-		FColor(255, 0, 0, 1),
-		false,
-		0,
-		0,
-		LineThickness
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParameters
 	);
+
+	/*if (hitDetected) {
+		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *Hit.GetActor()->GetName());
+	}*/
 
 }
 

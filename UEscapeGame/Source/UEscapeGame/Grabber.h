@@ -24,9 +24,14 @@ public:
 private:
 	APlayerController* Controller;
 
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+
 	UPROPERTY(EditAnywhere)
-	float GrabDistance = 100.0;
+	float Reach = 100.0;
 
 	UPROPERTY(EditAnywhere)
 	float LineThickness = 10.0;
+
+	UPROPERTY(EditAnywhere)
+	bool ShowDebugLine = false;
 };
