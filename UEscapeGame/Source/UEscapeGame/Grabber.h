@@ -19,13 +19,9 @@ public:
 	virtual void BeginPlay() override;
 	
 	// Called every frame
-	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	APlayerController* Controller;
-
-	UPhysicsHandleComponent* PhysicsHandle = nullptr;
-
 	UPROPERTY(EditAnywhere)
 	float Reach = 100.0;
 
@@ -34,4 +30,25 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	bool ShowDebugLine = false;
+
+	APlayerController* Controller;
+
+	UPhysicsHandleComponent* PhysicsHandle = nullptr;
+
+	UInputComponent* InputComponent = nullptr;
+
+	// Ray cast and grab physics object
+	void Grab();
+
+	// Release any grabbed physics object
+	void Release();
+	
+	// Finds the attached InputComponent
+	void FindInputComponent();
+
+	// Finds the PhysicsHandle Component
+	void FindPhysicsHandleComponent();
+
+	// Finds the first PhysicsBody in reach
+	const FHitResult GetFirstPhysicsBodyInReach();
 };
