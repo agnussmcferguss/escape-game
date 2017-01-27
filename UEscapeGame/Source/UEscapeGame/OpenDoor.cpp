@@ -62,19 +62,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 		// For each actor, add its mass to the total mass
 		for (const auto& IterActor : OverlappingActors) {
 
-			//UE_LOG(LogTemp, Error, TEXT("%s is overlapping"), *IterActor->GetName());
-
-			//const TSet<UPrimitiveComponent*> IterActorComponents;
-			for (const auto& IterComponent : IterActor->GetComponents()) {
-
-				UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(IterComponent);
-
-				if (PrimitiveComponent) {
-					//UE_LOG(LogTemp, Warning, TEXT("%s has mass of %f Kg"), *IterActor->GetName(), PrimitiveComponent->GetMass());
-					TotalMass += PrimitiveComponent->GetMass();
-				}
-			}
-
+			TotalMass += IterActor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		}
 	}
 
