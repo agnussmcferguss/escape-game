@@ -5,13 +5,13 @@
 #include "Components/ActorComponent.h"
 #include "Grabber.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UESCAPEGAME_API UGrabber : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
+
 	// Sets default values for this component's properties
 	UGrabber();
 
@@ -44,11 +44,19 @@ private:
 	void Release();
 	
 	// Finds the attached InputComponent
-	void FindInputComponent();
+	void BindInputComponent();
 
 	// Finds the PhysicsHandle Component
 	void FindPhysicsHandleComponent();
 
 	// Finds the first PhysicsBody in reach
 	const FHitResult GetFirstPhysicsBodyInReach();
+
+	const FVector GetViewLocation() const;
+
+	const FRotator GetViewRotation() const;
+
+	const FVector GetLineTraceEndPoint() const;
+
+	const FVector GetLineTraceEndPoint(const FVector& ViewLocation, const FRotator& ViewRotation) const;
 };
