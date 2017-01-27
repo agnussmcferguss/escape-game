@@ -28,10 +28,24 @@ void UGrabber::BeginPlay()
 // Called every frame
 void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
-	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// If the physics handle is attached
+	if (PhysicsHandle->GrabbedComponent) {
+		/// Get Player Viewport
+		FVector ViewLocation;
+		FRotator ViewRotation;
+		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+		/// Setup Query Parameters
+		FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+		FVector LineTraceEnd = ViewLocation + ViewRotation.Vector() * Reach;
+
 		// Move the object being held
+		PhysicsHandle->SetTargetLocation(LineTraceEnd);
+
+	}
+		
 
 }
 
@@ -64,15 +78,21 @@ void UGrabber::Grab()
 	//UE_LOG(LogTemp, Warning, TEXT("Grab Button Pressed"));
 
 	// Line Trace and Try and reach any actors with physics body
-	FHitResult Hit = GetFirstPhysicsBodyInReach();
-	AActor* HitActor = Hit.GetActor();
+	FHitResult HitResult = GetFirstPhysicsBodyInReach();
+	AActor* HitActor = HitResult.GetActor();
+	UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 
-	//if (HitActor) {
-	//	UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitActor->GetName());
-	//}
+	if (HitActor) {
+		UE_LOG(LogTemp, Warning, TEXT("Hit %s"), *HitActor->GetName());
 
-
-	// TODO: If we hit anything, attach physics handle
+		// TODO: If we hit anything, attach physics handle
+		PhysicsHandle->GrabComponent(
+			ComponentToGrab,
+			NAME_None,
+			ComponentToGrab->GetOwner()->GetActorLocation(),
+			true
+		);
+	}
 
 }
 
@@ -82,6 +102,7 @@ void UGrabber::Release()
 	UE_LOG(LogTemp, Warning, TEXT("Grab Released"));
 
 	// TODO: Release Physics handle
+	PhysicsHandle->ReleaseComponent();
 }
 
 
