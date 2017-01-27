@@ -34,8 +34,7 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	// Poll the trigger every frame
-	// If the actor that opens the door is in the volume
-	if (PressurePlate->IsOverlappingActor(ActorThatOpens)) {
+	if (GetTotalMassOfActorsOnPlate() > MassThreshold) {
 		// Open the door
 		OpenDoor();
 		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
@@ -47,6 +46,39 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 		CloseDoor();
 	}
 		
+}
+
+float UOpenDoor::GetTotalMassOfActorsOnPlate()
+{
+	// Initialise the Total Mass
+	float TotalMass = 0.0;
+
+	// Get a list of the physics actors on the plate
+	if (PressurePlate) {
+		TSet<AActor*> OverlappingActors;
+		//TSubclassOf<> ClassFilter();
+		PressurePlate->GetOverlappingActors(OverlappingActors, nullptr);
+
+		// For each actor, add its mass to the total mass
+		for (const auto& IterActor : OverlappingActors) {
+
+			//UE_LOG(LogTemp, Error, TEXT("%s is overlapping"), *IterActor->GetName());
+
+			//const TSet<UPrimitiveComponent*> IterActorComponents;
+			for (const auto& IterComponent : IterActor->GetComponents()) {
+
+				UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(IterComponent);
+
+				if (PrimitiveComponent) {
+					//UE_LOG(LogTemp, Warning, TEXT("%s has mass of %f Kg"), *IterActor->GetName(), PrimitiveComponent->GetMass());
+					TotalMass += PrimitiveComponent->GetMass();
+				}
+			}
+
+		}
+	}
+
+	return TotalMass;
 }
 
 void UOpenDoor::OpenDoor()

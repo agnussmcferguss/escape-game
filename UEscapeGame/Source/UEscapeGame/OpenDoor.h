@@ -39,7 +39,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DoorCloseDelay = 1.0f;
 
+	UPROPERTY(EditAnywhere)
+	float MassThreshold = 50.0;
+
 	float LastDoorOpenTime = -1.0f;
 
 	AActor* Owner; // The owning actor
+
+	float GetTotalMassOfActorsOnPlate();
 };
