@@ -23,6 +23,10 @@ void UOpenDoor::BeginPlay()
 	// Set the ActorThatOpens
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 	Owner = GetOwner();
+
+	if (!PressurePlate) {
+		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate trigger volume"), *GetOwner()->GetName());
+	}
 }
 
 
@@ -62,21 +66,23 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 
 			TotalMass += IterActor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		}
-	} else {
-		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate trigger volume"), *GetOwner()->GetName());
-	}
+	} 
 
 	return TotalMass;
 }
 
 void UOpenDoor::OpenDoor()
 {
-	FRotator currentRotation = Owner->GetActorRotation();
-	Owner->SetActorRotation(FRotator(0.0, OpenAngle, 0.0));
+	/*FRotator currentRotation = Owner->GetActorRotation();
+	Owner->SetActorRotation(FRotator(0.0, OpenAngle, 0.0));*/
+
+	OnOpenRequest.Broadcast();
 }
 
 void UOpenDoor::CloseDoor()
 {
-	FRotator currentRotation = Owner->GetActorRotation();
-	Owner->SetActorRotation(FRotator(0.0, 0.0, 0.0));
+	/*FRotator currentRotation = Owner->GetActorRotation();
+	Owner->SetActorRotation(FRotator(0.0, 0.0, 0.0));*/
+
+	OnCloseRequest.Broadcast();
 }
