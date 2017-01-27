@@ -31,7 +31,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool ShowDebugLine = false;
 
-	APlayerController* Controller;
+	APlayerController* Controller = nullptr;
 
 	UPhysicsHandleComponent* PhysicsHandle = nullptr;
 

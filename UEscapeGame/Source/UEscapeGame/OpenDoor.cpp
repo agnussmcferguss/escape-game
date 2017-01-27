@@ -22,9 +22,7 @@ void UOpenDoor::BeginPlay()
 
 	// Set the ActorThatOpens
 	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-
 	Owner = GetOwner();
-	
 }
 
 
@@ -54,7 +52,7 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 	float TotalMass = 0.0;
 
 	// Get a list of the physics actors on the plate
-	if (PressurePlate) {
+	if (PressurePlate != nullptr) {
 		TSet<AActor*> OverlappingActors;
 		//TSubclassOf<> ClassFilter();
 		PressurePlate->GetOverlappingActors(OverlappingActors, nullptr);
@@ -64,6 +62,8 @@ float UOpenDoor::GetTotalMassOfActorsOnPlate()
 
 			TotalMass += IterActor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		}
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate trigger volume"), *GetOwner()->GetName());
 	}
 
 	return TotalMass;

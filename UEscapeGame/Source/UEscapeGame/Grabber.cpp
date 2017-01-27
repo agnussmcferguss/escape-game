@@ -31,7 +31,7 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// If the physics handle is attached
-	if (PhysicsHandle->GrabbedComponent) {
+	if (PhysicsHandle != nullptr && PhysicsHandle->GrabbedComponent != nullptr) {
 		
 		// Get the location we want to move the object to
 		FVector LineTraceEnd = GetLineTraceEndPoint();
@@ -39,6 +39,8 @@ void UGrabber::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompon
 		// Move the object being held
 		PhysicsHandle->SetTargetLocation(LineTraceEnd);
 
+	} else if (PhysicsHandle == nullptr) {
+		UE_LOG(LogTemp, Error, TEXT("%s: missing PhysicsHandle"), *GetOwner()->GetName());
 	}
 		
 
@@ -51,7 +53,7 @@ void UGrabber::Grab()
 	AActor* HitActor = HitResult.GetActor();
 
 	// Attach Physics Handle
-	if (HitActor) {
+	if (HitActor != nullptr) {
 			UPrimitiveComponent* ComponentToGrab = HitResult.GetComponent();
 
 			PhysicsHandle->GrabComponent(
@@ -77,11 +79,11 @@ void UGrabber::BindInputComponent()
 	InputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
 	// If found, bind the grab action
-	if (!(InputComponent)) {
-		UE_LOG(LogTemp, Error, TEXT("%s: Missing InputComponent"), *GetOwner()->GetName());
-	} else {
+	if (InputComponent != nullptr) {
 		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
 		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing InputComponent"), *GetOwner()->GetName());
 	}
 }
 
@@ -113,7 +115,13 @@ const FVector UGrabber::GetViewLocation() const
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;
-	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	if (Controller != nullptr) {
+		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing PlayerController"), *GetOwner()->GetName());
+	}
+	
 	return ViewLocation;
 }
 
@@ -123,7 +131,13 @@ const FRotator UGrabber::GetViewRotation() const
 {
 	FVector ViewLocation;
 	FRotator ViewRotation;
-	Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+
+	if (Controller != nullptr) {
+		Controller->GetPlayerViewPoint(ViewLocation, ViewRotation);
+	} else {
+		UE_LOG(LogTemp, Error, TEXT("%s: Missing PlayerController"), *GetOwner()->GetName());
+	}
+
 	return ViewRotation;
 }
 
