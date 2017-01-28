@@ -20,10 +20,7 @@ void UOpenDoor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Set the ActorThatOpens
-	ActorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-	Owner = GetOwner();
-
+	/// Check that we have a valid pressure plate
 	if (!PressurePlate) {
 		UE_LOG(LogTemp, Error, TEXT("%s missing pressure plate trigger volume"), *GetOwner()->GetName());
 	}
@@ -36,53 +33,31 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 
 	// Poll the trigger every frame
-	if (GetTotalMassOfActorsOnPlate() > MassThreshold) {
+	if (GetTotalMassOfActorsOnPlate() > PressurePlateMassThreshold) {
 		// Open the door
-		OpenDoor();
-		LastDoorOpenTime = GetWorld()->GetTimeSeconds();
-	}
-
-	// check if it's time to close the door
-	float currentTime = GetWorld()->GetTimeSeconds();
-	if (currentTime > LastDoorOpenTime + DoorCloseDelay) {
-		CloseDoor();
+		OnOpenRequest.Broadcast();
+	} else {
+		OnCloseRequest.Broadcast();
 	}
 		
 }
 
 float UOpenDoor::GetTotalMassOfActorsOnPlate()
 {
-	// Initialise the Total Mass
 	float TotalMass = 0.0;
 
-	// Get a list of the physics actors on the plate
+	/// Check to see if the pressure plate volume is valid
 	if (PressurePlate != nullptr) {
+
+		// Get a list of the physics actors on the plate
 		TSet<AActor*> OverlappingActors;
-		//TSubclassOf<> ClassFilter();
 		PressurePlate->GetOverlappingActors(OverlappingActors, nullptr);
 
 		// For each actor, add its mass to the total mass
 		for (const auto& IterActor : OverlappingActors) {
-
 			TotalMass += IterActor->FindComponentByClass<UPrimitiveComponent>()->GetMass();
 		}
 	} 
 
 	return TotalMass;
-}
-
-void UOpenDoor::OpenDoor()
-{
-	/*FRotator currentRotation = Owner->GetActorRotation();
-	Owner->SetActorRotation(FRotator(0.0, OpenAngle, 0.0));*/
-
-	OnOpenRequest.Broadcast();
-}
-
-void UOpenDoor::CloseDoor()
-{
-	/*FRotator currentRotation = Owner->GetActorRotation();
-	Owner->SetActorRotation(FRotator(0.0, 0.0, 0.0));*/
-
-	OnCloseRequest.Broadcast();
 }

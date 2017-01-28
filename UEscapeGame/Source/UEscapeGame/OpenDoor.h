@@ -17,10 +17,6 @@ public:
 	// Sets default values for this component's properties
 	UOpenDoor();
 
-	void OpenDoor();
-
-	void CloseDoor();
-
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	
@@ -34,24 +30,12 @@ public:
 	FOnCloseRequest OnCloseRequest;
 
 private:
-	UPROPERTY(EditAnywhere)
-	float OpenAngle = 90.0;
 
 	UPROPERTY(EditAnywhere)
 	ATriggerVolume* PressurePlate = nullptr;
 
-	UPROPERTY(VisibleAnywhere)
-	AActor* ActorThatOpens = nullptr;
-
 	UPROPERTY(EditAnywhere)
-	float DoorCloseDelay = 1.0f;
-
-	UPROPERTY(EditAnywhere)
-	float MassThreshold = 50.0;
-
-	float LastDoorOpenTime = -1.0f;
-
-	AActor* Owner = nullptr; // The owning actor
+	float PressurePlateMassThreshold = 50.0;
 
 	float GetTotalMassOfActorsOnPlate();
 };
