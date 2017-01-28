@@ -35,14 +35,14 @@ void UOpenDoor::TickComponent( float DeltaTime, ELevelTick TickType, FActorCompo
 	// Poll the trigger every frame
 	if (GetTotalMassOfActorsOnPlate() > PressurePlateMassThreshold) {
 		// Open the door
-		OnOpenRequest.Broadcast();
+		OpenDoor.Broadcast();
 	} else {
-		OnCloseRequest.Broadcast();
+		CloseDoor.Broadcast();
 	}
 		
 }
 
-float UOpenDoor::GetTotalMassOfActorsOnPlate()
+float UOpenDoor::GetTotalMassOfActorsOnPlate() const
 {
 	float TotalMass = 0.0;
 

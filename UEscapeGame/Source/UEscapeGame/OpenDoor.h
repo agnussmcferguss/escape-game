@@ -5,8 +5,8 @@
 #include "Components/ActorComponent.h"
 #include "OpenDoor.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOpenRequest);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorEvent);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCloseRequest);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class UESCAPEGAME_API UOpenDoor : public UActorComponent
@@ -23,11 +23,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(BlueprintAssignable)
-	FOnOpenRequest OnOpenRequest;
+	UFUNCTION(BlueprintPure, Category="OpenDoor")
+	float GetTotalMassOfActorsOnPlate() const;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnCloseRequest OnCloseRequest;
+	FDoorEvent OpenDoor;
+
+	UPROPERTY(BlueprintAssignable)
+	FDoorEvent CloseDoor;
 
 private:
 
@@ -36,6 +39,4 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float PressurePlateMassThreshold = 50.0;
-
-	float GetTotalMassOfActorsOnPlate();
 };
